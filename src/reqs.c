@@ -1662,19 +1662,37 @@ void handle_connection (struct conn_s *connptr, union sockaddr_union* addr)
         }
         got_headers = 1;
 
+        /* "BasicAuth is required" section ... do needed validations for this */
         if (config->basicauth_list != NULL) {
-                char *authstring;
+                char *authstring = NULL;
                 int failure = 1, stathost_connect = 0;
-                authstring = orderedmap_find (hashofheaders, "proxy-authorization");
+
+                const char *additional_auth_header_name = config->additional_auth_header_name;
+                int additional_auth_header_preserve = 0;
+
+                /* First, look for the additional proxy auth header if configured */
+                if (additional_auth_header_name) {
+                        authstring = orderedmap_find(hashofheaders, additional_auth_header_name);
+                }
+
+                /* If the additional proxy auth header is not found or not configured, 
+                 * look for "proxy-authorization" */
+                if (!authstring) {
+                        authstring = orderedmap_find(hashofheaders, "proxy-authorization");
+                }
 
                 if (!authstring && config->stathost) {
                         authstring = orderedmap_find (hashofheaders, "host");
                         if (authstring && !strncmp(authstring, config->stathost, strlen(config->stathost))) {
                                 authstring = orderedmap_find (hashofheaders, "authorization");
                                 stathost_connect = 1;
-                        } else authstring = 0;
+                        } else {
+                                authstring = 0;
+                        }
                 }
 
+                /* If BasicAuth for proxy is required... but non of the headers present in request ..
+                 * deny access and request authorization */
                 if (!authstring) {
                         if (stathost_connect) goto e401;
                         update_stats (STAT_DENIED);
@@ -1703,6 +1721,11 @@ e401:
                                              NULL);
                         HC_FAIL();
                 }
+                /* Remove the additional auth header only if not configured to be preserved */
+                if (additional_auth_header_name && !additional_auth_header_preserve) {
+                        orderedmap_remove(hashofheaders, additional_auth_header_name);
+                }
+                /* Remove of default proxy auth header in all cases */
                 orderedmap_remove (hashofheaders, "proxy-authorization");
         }
 

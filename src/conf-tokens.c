@@ -58,6 +58,8 @@ config_directive_find (register const char *str, register size_t len)
       {"logfile", CD_logfile},
       {"basicauth", CD_basicauth},
       {"basicauthrealm", CD_basicauthrealm},
+      {"additionalauthheadername", CD_additionalauthheadername},
+      {"additionalauthheaderpreserve", CD_additionalauthheaderpreserve},
       {"addheader", CD_addheader},
       {"maxrequestsperchild", CD_maxrequestsperchild}
     };

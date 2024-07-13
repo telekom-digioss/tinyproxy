@@ -1,3 +1,5 @@
+.local
+.vscode
 INSTALL
 Makefile
 Makefile.in

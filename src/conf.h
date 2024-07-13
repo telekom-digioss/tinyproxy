@@ -40,6 +40,8 @@ typedef struct {
 struct config_s {
         sblist *basicauth_list;
         char *basicauth_realm;
+        char *additional_auth_header_name;
+        unsigned int additional_auth_header_preserve;   /* boolean */
         char *logf_name;
         unsigned int syslog;    /* boolean */
         unsigned int port;

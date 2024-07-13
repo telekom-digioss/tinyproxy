@@ -212,6 +212,29 @@ Allow ::1
 # - defaults in code to "Tinyproxy" (PACKAGE_NAME), if not configured.
 #BasicAuthRealm "Tinyproxy"
 
+# AdditionalAuthHeaderName:
+# HTTP proxy-authorization additional custom auth header.
+# If "BasicAuth" for this proxy is activated, this configures in addition to 
+# default "proxy-authorization" header a alternative supported header name.
+# It will be used preferred in advance of the normal "proxy-authorization" header.
+# If this setting is not configured, or the configured additional header name
+# is in the request to the proxy not contained, the normal "proxy-authorization"
+# header will be used by tinyproxy.
+#AdditionalAuthHeaderName "x-gateway-authorization"
+
+# AdditionalAuthHeaderPreserve:
+# proxy-authorization header is per default stripped from request to upstream / target.
+# When this setting is enabled, the additional header (if configured) will be
+# forwarded to the next communication hop.
+# Very helpful in case of cascaded proxies when authentication 
+# information should be forwarded to the next hop of communication.
+# --> Please only use it when you know what you do, it will leak the credential
+#     in the request, if you do not remove / filter this header before the traffic
+#     leaves the trusted proxy chain where you need to have control over it.
+# --> Ensure that next proxy hop has a header filter implemented which
+#     will remove this header again !!
+#AdditionalAuthHeaderPreserve No
+
 #
 # AddHeader: Adds the specified headers to outgoing HTTP requests that
 # Tinyproxy makes. Note that this option will not work for HTTPS

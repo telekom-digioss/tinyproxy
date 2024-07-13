@@ -123,6 +123,8 @@ static HANDLE_FUNC (handle_disabled_feature)
 static HANDLE_FUNC (handle_allow);
 static HANDLE_FUNC (handle_basicauth);
 static HANDLE_FUNC (handle_basicauthrealm);
+static HANDLE_FUNC (handle_additionalauthheadername);
+static HANDLE_FUNC (handle_additionalauthheaderpreserve);
 static HANDLE_FUNC (handle_anonymous);
 static HANDLE_FUNC (handle_bind);
 static HANDLE_FUNC (handle_bindsame);
@@ -203,10 +205,12 @@ struct {
         STDCONF (statfile, STR, handle_statfile),
         STDCONF (stathost, STR, handle_stathost),
         STDCONF (xtinyproxy,  BOOL, handle_xtinyproxy),
+        STDCONF (additionalauthheadername, STR, handle_additionalauthheadername),
         /* boolean arguments */
         STDCONF (syslog, BOOL, handle_syslog),
         STDCONF (bindsame, BOOL, handle_bindsame),
         STDCONF (disableviaheader, BOOL, handle_disableviaheader),
+        STDCONF (additionalauthheaderpreserve, BOOL, handle_additionalauthheaderpreserve),
         /* integer arguments */
         STDCONF (port, INT, handle_port),
         STDCONF (maxclients, INT, handle_maxclients),
@@ -641,6 +645,16 @@ set_int_arg (unsigned int *var, const char *line, regmatch_t * match)
 static HANDLE_FUNC (handle_basicauthrealm)
 {
         return set_string_arg (&conf->basicauth_realm, line, &match[2]);
+}
+
+static HANDLE_FUNC (handle_additionalauthheadername)
+{
+        return set_string_arg (&conf->additional_auth_header_name, line, &match[2]);
+}
+
+static HANDLE_FUNC (handle_additionalauthheaderpreserve)
+{
+        return set_bool_arg (&conf->additional_auth_header_preserve, line, &match[2]);
 }
 
 static HANDLE_FUNC (handle_logfile)
